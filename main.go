@@ -77,37 +77,36 @@ func createLeadHandler(ctx iris.Context) {
 		return
 	}
 
+	var fpath string = ""
+
 	// Get the file from the request
 	file, info, err := ctx.FormFile("File")
 	if err != nil {
-		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(iris.Map{
-			"status":  400,
-			"message": err.Error(),
-		})
-		return
+		fpath = ""
 	}
-	defer file.Close()
 
-	timestamp := strconv.FormatInt((time.Now().UnixNano() / 1e6), 10)
-	fpath := os.Getenv("UPLOAD_PATH") + timestamp + "_" + info.Filename
+	if fpath != "" {
+		defer file.Close()
 
-	// Create a file with the same name
-	// assuming that you have a folder named 'uploads'
-	out, err := os.OpenFile(fpath,
-		os.O_WRONLY|os.O_CREATE, 0666)
+		timestamp := strconv.FormatInt((time.Now().UnixNano() / 1e6), 10)
+		fpath := os.Getenv("UPLOAD_PATH") + timestamp + "_" + info.Filename
 
-	if err != nil {
-		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(iris.Map{
-			"status":  400,
-			"message": err.Error(),
-		})
-		return
+		// Create a file with the same name
+		// assuming that you have a folder named 'uploads'
+		out, err := os.OpenFile(fpath,
+			os.O_WRONLY|os.O_CREATE, 0666)
+
+		if err != nil {
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.JSON(iris.Map{
+				"status":  400,
+				"message": err.Error(),
+			})
+			return
+		}
+		defer out.Close()
+		io.Copy(out, file)
 	}
-	defer out.Close()
-
-	io.Copy(out, file)
 
 	err = sendLeadByEmail(lead, fpath)
 	if err != nil {
@@ -175,13 +174,6 @@ func getSendgridBody(lead Lead, fpath string) ([]byte, error) {
 	}
 	htmlData := buff.String()
 
-	f, err := ioutil.ReadFile(fpath)
-	if err != nil {
-		return nil, err
-	}
-
-	_, filename := filepath.Split(fpath)
-
 	m := mail.NewV3Mail()
 	e := mail.NewEmail(emailAddress, emailAddress)
 	m.SetFrom(e)
@@ -202,12 +194,19 @@ func getSendgridBody(lead Lead, fpath string) ([]byte, error) {
 	c = mail.NewContent("text/html", htmlData)
 	m.AddContent(c)
 
-	attachedFile := mail.NewAttachment()
-	attachedFile.SetContent(base64.StdEncoding.EncodeToString(f))
-	attachedFile.SetFilename(filename)
-	attachedFile.SetDisposition("attachment")
-	m.AddAttachment(attachedFile)
+	if fpath != "" {
+		f, err := ioutil.ReadFile(fpath)
+		if err != nil {
+			return nil, err
+		}
+		_, filename := filepath.Split(fpath)
+
+		attachedFile := mail.NewAttachment()
+		attachedFile.SetContent(base64.StdEncoding.EncodeToString(f))
+		attachedFile.SetFilename(filename)
+		attachedFile.SetDisposition("attachment")
+		m.AddAttachment(attachedFile)
+	}
 
 	return mail.GetRequestBody(m), err
 }
-

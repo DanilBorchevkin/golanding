@@ -27,20 +27,3 @@ var x = setInterval(function() {
   }
 }, 1000);
 
-/*
-const form = document.getElementById('form');
-const submit = form.querySelector('button[type="submit"]');
-const dataSend = new FormData(form);
-
-submit.addEventListener('click', e => {
-    console.log('form is submitted');
-    e.preventDefault();
-   fetch(form.action, dataSend)
-       .then(( response ) => {
-           console.log( response );
-       })
-       .catch(error => {
-           console.log( error );
-       });
-});
-*/
