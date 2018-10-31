@@ -119,16 +119,6 @@ func createLeadHandler(ctx iris.Context) {
 		return
 	}
 
-	err = os.Remove(fpath)
-	if err != nil {
-		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.JSON(iris.Map{
-			"status":  400,
-			"message": "Can't delete file after sending - " + err.Error(),
-		})
-		return
-	}
-
 	ctx.JSON(iris.Map{
 		"status":  200,
 		"message": "A lead successfully created",
@@ -221,7 +211,3 @@ func getSendgridBody(lead Lead, fpath string) ([]byte, error) {
 	return mail.GetRequestBody(m), err
 }
 
-func deleteFile(fpath string) error {
-	var err = os.Remove(fpath)
-	return err
-}

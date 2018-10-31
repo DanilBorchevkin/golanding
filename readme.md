@@ -44,7 +44,7 @@ As a peace a cake:
     go get
     go run main.go
 ```
-
+.
 ## Routes and data format
 
 The app has only two routes:
