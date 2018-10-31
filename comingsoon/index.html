@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<head>
+    <link href="index.css" rel="stylesheet"/>
+    <script src="index.js"></script>
+</head>
+
+<body>
+    <div class="bgimg">
+        <div class="topleft">
+          <p>Danil Borchevkin</p>
+        </div>
+        <div class="middle">
+          <h1>COMING SOON</h1>
+          <hr>
+          <p id="demo" style="font-size:30px"></p>
+          <form action="/createlead" method="POST" enctype="multipart/form-data">
+            Project Type: <input type="text" name="ProjectType" /> <br />
+            Work Type: <input type="text" name="WorkType" /> <br />
+            When Start: <input type="text" name="WhenStart" /> <br />
+            Fio: <input type="text" name="Fio" /> <br />
+            Phone or Skype: <input type="text" name="PhoneOrSkype" /> <br />
+            Email: <input type="text" name="Email" /> <br />
+            Description: <input type="text" name="Description" /> <br />
+            <input type="file" name="File" /> <br />
+            <input type="submit" value="Send data" />
+          </form>
+        </div>
+        <div class="bottomleft">
+          <p>golanding serving</p>
+        </div>
+    </div>
+</body>
