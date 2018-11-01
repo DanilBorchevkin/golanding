@@ -24,9 +24,9 @@ BSD-2-Clause. Please see LICENSE file
 
 For using this code you should copy ***.env.example*** as ***.env*** and fill following variables:
 
-* ***STATIC_PATH*** - path there you store your landing page. If you have no suitable landing page you can use proposed *comingsoon* page with path *./comingsoon/*
+* ***STATIC_PATH*** - path where you store your landing page. If you have no suitable landing page you can use proposed *comingsoon* page with path *./comingsoon/*
 
-* ***PORT*** - port on which will expose a landing page. Usually 80
+* ***HTTP_PORT*** - port on which will expose a landing page. Usually 80
 
 * ***UPLOAD_PATH*** - path for uploads files. Don't forget create this folder!
 
@@ -40,7 +40,7 @@ For using this code you should copy ***.env.example*** as ***.env*** and fill fo
 
 As a peace a cake:
 
-```go
+```shell
     go get
     go run main.go
 ```
