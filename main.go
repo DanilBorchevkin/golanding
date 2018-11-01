@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/iris-contrib/middleware/cors"
 	"github.com/joho/godotenv"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/middleware/logger"
@@ -21,6 +22,9 @@ import (
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )
 
+const refreshCacheEvery = 10 * time.Second
+
+// Lead structure used for save data from html form
 type Lead struct {
 	ProjectType  string
 	WorkType     string
@@ -37,9 +41,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	port := os.Getenv("PORT")
-	//sendGridAPIKey := os.Getenv("SENDGRID_API_KEY")
-	//emailAddress := os.Getenv("EMAIL_ADDRESS")
+	httpPort := os.Getenv("HTTP_PORT")
 	staticPath := os.Getenv("STATIC_PATH")
 	debugLevel := os.Getenv("DEBUG_LEVEL")
 
@@ -47,16 +49,19 @@ func main() {
 	app.Logger().SetLevel(debugLevel)
 	app.Use(recover.New())
 	app.Use(logger.New())
+
+	app.Use(cors.Default())                   // enable all origins, disallow credentials
+	app.Use(iris.Cache304(refreshCacheEvery)) // clien-side cache
+
 	app.StaticWeb("/", staticPath)
 	app.OnErrorCode(iris.StatusNotFound, notFoundHandler)
 	app.OnErrorCode(iris.StatusInternalServerError, internalServerErrorHandler)
 	app.Post("/createlead", iris.LimitRequestBodySize(10<<20), createLeadHandler)
 
-	app.Run(iris.Addr(":"+port), iris.WithoutServerError(iris.ErrServerClosed))
+	app.Run(iris.Addr(":"+httpPort), iris.WithoutServerError(iris.ErrServerClosed))
 }
 
 func notFoundHandler(ctx iris.Context) {
-	// when 404 then render the template $views_dir/errors/404.html
 	ctx.WriteString("Ooops. 404 error")
 }
 
@@ -66,6 +71,7 @@ func internalServerErrorHandler(ctx iris.Context) {
 
 func createLeadHandler(ctx iris.Context) {
 	lead := Lead{}
+	var fpath string
 
 	err := ctx.ReadForm(&lead)
 	if err != nil {
@@ -76,8 +82,6 @@ func createLeadHandler(ctx iris.Context) {
 		})
 		return
 	}
-
-	var fpath string = ""
 
 	// Get the file from the request
 	file, info, err := ctx.FormFile("File")
