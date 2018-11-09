@@ -92,8 +92,9 @@ func createLeadHandler(ctx iris.Context) {
 	if err == nil {
 		defer file.Close()
 
+		uploadPath := os.Getenv("UPLOAD_PATH")
 		timestamp := strconv.FormatInt((time.Now().UnixNano() / 1e6), 10)
-		fpath := os.Getenv("UPLOAD_PATH") + timestamp + "_" + info.Filename
+		fpath = uploadPath + timestamp + "_" + info.Filename
 
 		out, err := os.OpenFile(fpath,
 			os.O_WRONLY|os.O_CREATE, 0666)
