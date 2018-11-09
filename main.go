@@ -86,17 +86,15 @@ func createLeadHandler(ctx iris.Context) {
 	// Get the file from the request
 	file, info, err := ctx.FormFile("File")
 	if err != nil {
-		fpath = ""
+		fmt.Println("File error. No file will be sended")
 	}
 
-	if fpath != "" {
+	if err == nil {
 		defer file.Close()
 
 		timestamp := strconv.FormatInt((time.Now().UnixNano() / 1e6), 10)
 		fpath := os.Getenv("UPLOAD_PATH") + timestamp + "_" + info.Filename
 
-		// Create a file with the same name
-		// assuming that you have a folder named 'uploads'
 		out, err := os.OpenFile(fpath,
 			os.O_WRONLY|os.O_CREATE, 0666)
 
@@ -126,6 +124,7 @@ func createLeadHandler(ctx iris.Context) {
 		"status":  200,
 		"message": "A lead successfully created",
 		"lead":    lead,
+		"filepath": fpath,
 	})
 }
 
