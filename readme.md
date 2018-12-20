@@ -2,6 +2,8 @@
 
 This project is purposed to give some base for landing page serving.
 
+How yo use it you can check it in own blog - [Serve landing page with Go Iris backend on CentOS](http://borchevkin.com/serve-landing-page-with-go/)
+
 ## License
 
 BSD-2-Clause. Please see LICENSE file
@@ -19,6 +21,8 @@ BSD-2-Clause. Please see LICENSE file
 * ***/comingsoon/*** - coming soon page for serving. It may use only as example of working
 
 ## Bootstrap
+
+Please check out the article [Serve landing page with Go Iris backend on CentOS](http://borchevkin.com/serve-landing-page-with-go/)
 
 ### Setup .env file
 
