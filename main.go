@@ -154,7 +154,8 @@ func sendLeadByEmail(lead Lead, fpath string) error {
 }
 
 func getSendgridBody(lead Lead, fpath string) ([]byte, error) {
-	emailAddress := os.Getenv("EMAIL_ADDRESS")
+	emailAddressFrom := os.Getenv("EMAIL_ADDRESS_FROM")
+	emailAddressTo := os.Getenv("EMAIL_ADDRESS_TO")
 
 	const tpl = `
 		<p>Project type: {{.ProjectType}}</p>
@@ -179,12 +180,12 @@ func getSendgridBody(lead Lead, fpath string) ([]byte, error) {
 	htmlData := buff.String()
 
 	m := mail.NewV3Mail()
-	e := mail.NewEmail(emailAddress, emailAddress)
+	e := mail.NewEmail(emailAddressFrom, emailAddressFrom)
 	m.SetFrom(e)
 
 	p := mail.NewPersonalization()
 	tos := []*mail.Email{
-		mail.NewEmail(emailAddress, emailAddress),
+		mail.NewEmail(emailAddressTo, emailAddressTo),
 	}
 	p.AddTos(tos...)
 

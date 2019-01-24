@@ -36,7 +36,9 @@ For using this code you should copy ***.env.example*** as ***.env*** and fill fo
 
 * ***SENDGRID_API_KEY*** - it's very obiviously
 
-* ***EMAIL_ADDRESS*** - address which wil be use as *FROM* and *TO* in emails
+* ***EMAIL_ADDRESS_FROM*** - address which wil be use as *FROM* in emails. You can set any email.
+
+* ***EMAIL_ADDRESS_TO*** - address which wil be use as *TO* in emails. This email should be exist.
 
 * ***DEBUG_LEVEL*** - debug level of the Iris framework. Equals to *debug* as default
 
